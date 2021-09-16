@@ -1,0 +1,821 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "User Management API",
+    "description": "API for user management",
+    "contact": {
+      "name": "Muhammad Fathi",
+      "email": "contact.fathisiddiqi@gmail.com",
+      "url": "https://fathisiddiqi.github.io"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "API Server for local development"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": ["Users API"],
+        "summary": "Get all users",
+        "description": "Get all users",
+        "parameters": [
+          {
+            "name": "lastname",
+            "in": "query",
+            "description": "Filter by lastname",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "fulan": {
+                "value": "Fulan",
+                "description": "Example lastname value"
+              }
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "description": "sort by lastname",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "asc": {
+                "value": "lastname.asc",
+                "description": "Example lastname Ascending Sort"
+              },
+              "desc": {
+                "value": "lastname.desc",
+                "description": "Example lastname Descending Sort"
+              }
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limiting the result",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "10": {
+                "value": "10",
+                "description": "Limiting result by 10"
+              }
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset for starting result",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "20": {
+                "value": "20",
+                "description": "Offset start from 20"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The response of get all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "description": "Description for success",
+                    "value": {
+                      "code": 200,
+                      "status": "OK",
+                      "data": [
+                        {
+                          "id": "avdjruwndfsdjfkwei2",
+                          "firstName": "Abdul",
+                          "lastName": "Qadir",
+                          "email": "abdulqadir@gmail.com",
+                          "role": "superadmin",
+                          "createdAt": "2020-09-12",
+                          "updatedAt": "2020-09-13"
+                        },
+                        {
+                          "id": "dsfsdfewiriewru3",
+                          "firstName": "John",
+                          "lastName": "Doe",
+                          "email": "johndoe@gmail.com",
+                          "role": "operator",
+                          "createdAt": "2020-09-12",
+                          "updatedAt": "2020-09-13"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users API"],
+        "summary": "Create a new user",
+        "description": "Create anew user",
+        "requestBody": {
+          "description": "Body for create a new user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrUpdateUser"
+              },
+              "examples": {
+                "fulan": {
+                  "description": "Example for create fulan user",
+                  "value": {
+                    "firstName": "Abdul",
+                    "lastName": "Qadir",
+                    "email": "abdulqadir@gmail.com",
+                    "role": "superadmin",
+                    "password": "loremipsumdolor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Responses for success create a new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "description": "Response for success create new data",
+                    "value": {
+                      "code": 200,
+                      "status": "OK",
+                      "data": {
+                        "id": "avdjruwndfsdjfkwei2",
+                        "firstName": "Abdul",
+                        "lastName": "Qadir",
+                        "email": "abdulqadir@gmail.com",
+                        "role": "superadmin",
+                        "createdAt": "2020-09-12",
+                        "updatedAt": "2020-09-13"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Responses for failed create a new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Err"
+                },
+                "examples": {
+                  "failed": {
+                    "description": "Response for success create new data",
+                    "value": {
+                      "code": 400,
+                      "status": "BAD REQUEST",
+                      "errors": [
+                        {
+                          "name": "ErrValidation",
+                          "error": "`firstName` value cannot be empty"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": ["Users API"],
+        "summary": "Get user by id",
+        "description": "Get user by id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Responses for success get user by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "success": {
+                    "description": "Responses for success get user by id",
+                    "value": {
+                      "code": 200,
+                      "status": "OK",
+                      "data": {
+                        "id": "avdjruwndfsdjfkwei2",
+                        "firstName": "Abdul",
+                        "lastName": "Qadir",
+                        "email": "abdulqadir@gmail.com",
+                        "role": "superadmin",
+                        "createdAt": "2020-09-12",
+                        "updatedAt": "2020-09-13"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Responses for failed get user by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Err"
+                },
+                "examples": {
+                  "failed": {
+                    "description": "Response for failed get data by id",
+                    "value": {
+                      "code": 404,
+                      "status": "NOT FOUND",
+                      "errors": [
+                        {
+                          "name": "ErrNotFound",
+                          "error": "user not found"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users API"],
+        "summary": "Update user by id",
+        "description": "Update user by id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "description": "Body for create a new user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrUpdateUser"
+              },
+              "examples": {
+                "fulan": {
+                  "description": "Example for update user fulan user",
+                  "value": {
+                    "firstName": "Abdul",
+                    "lastName": "Qadir",
+                    "email": "abdulqadir@gmail.com",
+                    "role": "superadmin",
+                    "password": "loremipsumdolor"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response success for update an existing user by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "description": "Response for success update an existing data",
+                    "value": {
+                      "code": 200,
+                      "status": "OK",
+                      "data": {
+                        "id": "avdjruwndfsdjfkwei2",
+                        "firstName": "Abdul",
+                        "lastName": "Qadir",
+                        "email": "abdulqadir@gmail.com",
+                        "role": "superadmin",
+                        "createdAt": "2020-09-12",
+                        "updatedAt": "2020-09-13"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Responses for failed update an existing new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Err"
+                },
+                "examples": {
+                  "failed": {
+                    "description": "Response for success create new data",
+                    "value": {
+                      "code": 400,
+                      "status": "BAD REQUEST",
+                      "errors": [
+                        {
+                          "name": "ErrValidation",
+                          "error": "`firstName` value cannot be empty"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Responses for failed update an existing user by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Err"
+                },
+                "examples": {
+                  "failed": {
+                    "description": "Response for failed get data by id",
+                    "value": {
+                      "code": 404,
+                      "status": "NOT FOUND",
+                      "errors": [
+                        {
+                          "name": "ErrNotFound",
+                          "error": "user not found"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users API"],
+        "summary": "Delete an existing user by id",
+        "description": "Delete an existing user by id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response success for delete an existing user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "description": "Response for success update an existing data",
+                    "value": {
+                      "code": 200,
+                      "status": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Responses for failed delete user by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Err"
+                },
+                "examples": {
+                  "failed": {
+                    "description": "Response for failed delete user by id",
+                    "value": {
+                      "code": 404,
+                      "status": "NOT FOUND",
+                      "errors": [
+                        {
+                          "name": "ErrNotFound",
+                          "error": "user not found"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication API"],
+        "summary": "Login user",
+        "description": "Login an user",
+        "requestBody": {
+          "description": "Request body for login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "required": ["true"]
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 8,
+                    "required": ["true"]
+                  }
+                }
+              },
+              "examples": {
+                "abdul": {
+                  "description": "Request body for login example",
+                  "value": {
+                    "email": "abdulqadir@gmail.com",
+                    "password": "loremipsum78"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Response body for login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string"
+                        },
+                        "refreshToken": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "description": "Examples success login user",
+                    "value": {
+                      "code": 200,
+                      "status": "OK",
+                      "data": {
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWJkdWwgUWFkaXIiLCJwYXNzd29yZCI6ImxvcmVtaXNwdW03OCIsImlhdCI6MTUxNjIzOTAyMn0.rXwu6WUbJjqKtLmiJJfJxgDgp1OXtkeSl9dRdJSYEyM",
+                        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWJkdWwgUWFkaXIiLCJwYXNzd29yZCI6ImxvcmVtaXNwdW03OCIsImlhdCI6MTUxNjIzOTAyMn0.rXwu6WUbJjqKtLmiJJfJxgDgp1OXtkeSl9dRdJSYEyM"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response body not authorized user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Err"
+                },
+                "examples": {
+                  "failed": {
+                    "description": "Example for failed login user",
+                    "value": {
+                      "code": 401,
+                      "status": "UNAUTHORIZED",
+                      "errors": [
+                        {
+                          "name": "ErrUNAUTHORIZED",
+                          "error": "wrong username and password"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Authentication API"],
+        "summary": "Register user",
+        "description": "Register user",
+        "requestBody": {
+          "description": "Request body for register",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "required": ["true"]
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "required": ["true"]
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "required": ["true"]
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 8,
+                    "required": ["true"]
+                  }
+                }
+              },
+              "examples": {
+                "abdul": {
+                  "description": "Request body for login example",
+                  "value": {
+                    "firstName": "Abdul",
+                    "lastName": "Qadir",
+                    "email": "abdulqadir@gmail.com",
+                    "password": "loremipsum78"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Response body for register",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string"
+                        },
+                        "refreshToken": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "success": {
+                    "description": "Examples success register user",
+                    "value": {
+                      "code": 200,
+                      "status": "OK",
+                      "data": {
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWJkdWwgUWFkaXIiLCJwYXNzd29yZCI6ImxvcmVtaXNwdW03OCIsImlhdCI6MTUxNjIzOTAyMn0.rXwu6WUbJjqKtLmiJJfJxgDgp1OXtkeSl9dRdJSYEyM",
+                        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWJkdWwgUWFkaXIiLCJwYXNzd29yZCI6ImxvcmVtaXNwdW03OCIsImlhdCI6MTUxNjIzOTAyMn0.rXwu6WUbJjqKtLmiJJfJxgDgp1OXtkeSl9dRdJSYEyM"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Responses for failed register user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Err"
+                },
+                "examples": {
+                  "failed": {
+                    "description": "Response for failed register user",
+                    "value": {
+                      "code": 400,
+                      "status": "BAD REQUEST",
+                      "errors": [
+                        {
+                          "name": "ErrValidation",
+                          "error": "`firstName` value cannot be empty"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {}
+  },
+  "components": {
+    "parameters": {
+      "UserId": {
+        "name": "userId",
+        "in": "path",
+        "description": "Parameter for user id",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateOrUpdateUser": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "required": ["true"]
+          },
+          "lastName": {
+            "type": "string",
+            "required": ["true"]
+          },
+          "email": {
+            "type": "string",
+            "required": ["true"]
+          },
+          "role": {
+            "type": "string",
+            "required": ["true"]
+          },
+          "password": {
+            "type": "string",
+            "required": ["true"]
+          }
+        }
+      },
+      "Err": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
